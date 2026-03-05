@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses | Vector Classes</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root { --blue: #38bdf8; --light: #0f172a; --dark-card: #1e293b; --text-gray: #94a3b8; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--light); color: white; line-height: 1.6; }
+        nav { background: var(--dark-card); padding: 0.8rem 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--blue); }
+        nav .logo-area { display: flex; align-items: center; gap: 10px; }
+        nav .nav-links { list-style: none; display: flex; gap: 7px; padding: 5px; }
+        nav a { text-decoration: none; color: white; font-weight: 500; font-size: 14px; transition: 0.3s; }
+        nav a:hover { color: var(--blue); }
+        .page-header { text-align: center; padding: 50px 20px; background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1350&q=80'); background-size: cover; background-position: center; }
+        .page-header h1 { color: var(--blue); font-size: 2.5rem; margin: 0; }
+        .page-header p { color: var(--text-gray); }
+        .controls { max-width: 1200px; margin: -30px auto 30px; padding: 20px; background: var(--dark-card); border-radius: 15px; display: flex; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .search-bar { width: 100%; max-width: 500px; padding: 12px 20px; border-radius: 50px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+        .section-title { border-left: 5px solid var(--blue); padding-left: 15px; margin: 40px 0 20px; color: var(--blue); }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .video-card { background: var(--dark-card); border-radius: 15px; overflow: hidden; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
+        .video-card:hover { transform: translateY(-10px); border-color: var(--blue); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .video-card iframe { width: 100%; border: none; height: 200px; }
+        .video-info { padding: 15px; }
+        .video-info h3 { font-size: 16px; margin: 0; color: #f1f5f9; }
+        .video-info span { font-size: 12px; color: var(--text-gray); }
+        footer { text-align: center; padding: 40px; background: #070b14; color: var(--text-gray); margin-top: 50px; }
+        @media (max-width: 768px) { .video-grid { grid-template-columns: 1fr; } }
+        select{
+            background: #fb7185;
+            color: white !important;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-size: 12px !important;
+        }
+        button{
+            background: #38bdf8;
+            color: #f50808 !important;
+            padding:6px 15px ;
+            border-radius: 6px;
+            font-size: 12px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-area">
+            <img src="vector_classes_logo.jpg" width="45" height="45" style="border-radius: 50%;">
+            <span style="font-weight: bold; color: var(--blue);">Vector Classes</span>
+        </div>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="courses.html" style="color: var(--blue);">Courses</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Video Lectures</h1>
+        <p>Expert Guidance for Class 1 to 12th Students</p>
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <input type="text" class="search-bar" placeholder="Search for topics..." onkeyup="filterVideos()">
+        </div>
+
+        <h2 class="section-title">Mathematics - Class 7</h2>
+        <div id="math-grid" class="video-grid">
+            </div>
+
+        <h2 class="section-title">Science - Class 8</h2>
+        <div id="science-grid" class="video-grid">
+            </div>
+
+         <h2 class="section-title"> ncert books for all classes</h2>
+            <div class="card">
+    <select id="classSelect" onchange="updateSubjects()">
+            <option value="select">..select..</option>
+            <option value="class 1">class 1</option>
+            <option value="class 2">class 2</option>
+            <option value="class 3">class 3</option>
+            <option value="class 4">class 4</option>
+            <option value="class 5">class 5</option>
+            <option value="class 6">class 6</option>
+            <option value="class 7">class 7</option>
+            <option value="class 8">class 8</option>
+            <option value="class 9">class 9</option>
+            <option value="class 10">class10 </option>
+        </select>
+        <select id="subjectSelect" onchange="updateChapters()">
+            <option value="">-- Select Subject --</option>
+        </select>
+
+        <select id="chapterSelect">
+            <option value="">-- Select Chapter --</option>
+        </select>
+
+        <br>
+        <button onclick="openPDF()">GO</button>
+        </div>
+
+    <footer>
+        <p>&copy; 2026 Vector Classes - Quality Education for All</p>
+    </footer>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOqt5Pe6q_hiJbCTly7MQ_8ob4ICyMmx4",
+            authDomain: "vector-classes-6c2a7.firebaseapp.com",
+            projectId: "vector-classes-6c2a7",
+            storageBucket: "vector-classes-6c2a7.appspot.com",
+            messagingSenderId: "975898657895",
+            appId: "1:975898657895:web:52e4f64e50a45d434840c2"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Data Load Function
+        db.collection("videos").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            const mathGrid = document.getElementById('math-grid');
+            const scienceGrid = document.getElementById('science-grid');
+            
+            mathGrid.innerHTML = '';
+            scienceGrid.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const video = doc.data();
+                const cardHTML = `
+                    <div class="video-card">
+                        <iframe src="${video.url}" title="YouTube video"></iframe>
+                        <div class="video-info">
+                            <h3>${video.title}</h3>
+                            <span>${video.class}</span>
+                        </div>
+                    </div>
+                `;
+
+                if(video.class === "Class 7 Maths") {
+                    mathGrid.innerHTML += cardHTML;
+                } else if(video.class === "Class 8 Science") {
+                    scienceGrid.innerHTML += cardHTML;
+                }
+            });
+        });
+
+        function filterVideos() {
+            let input = document.querySelector('.search-bar').value.toLowerCase();
+            let cards = document.querySelectorAll('.video-card');
+            cards.forEach(card => {
+                let title = card.querySelector('h3').innerText.toLowerCase();
+                card.style.display = title.includes(input) ? "block" : "none";
+            });
+        }
+
+
+
+
+
+          const data = {
+            "class 1": {
+                "Maths": [
+                    { name: "chapter 1", url: "class 1 maths chapter 1.pdf" },
+                    { name: "chapter 2", url: "class 1 maths chapter 2.pdf" },
+                    { name: "chapter 3", url: "class 1 maths chapter 3.pdf" },
+                    { name: "chapter 4", url: "class 1 maths chapter 4.pdf" },
+                    { name: "chapter 5", url: "class 1 maths chapter 5.pdf" },
+                    { name: "chapter 6", url: "class 1 maths chapter 6.pdf" },
+                    { name: "chapter 7", url: "class 1 maths chapter 7.pdf" },
+                    { name: "chapter 8", url: "class 1 maths chapter 8.pdf" },
+                    { name: "chapter 9", url: "class 1 maths chapter 9.pdf" },
+                    { name: "chapter 10", url: "class 1 maths chapter 10.pdf" },
+                    { name: "chapter 11", url: "class 1 maths chapter 11.pdf" },
+                    { name: "chapter 12", url: "class 1 maths chapter 12.pdf" },
+                    { name: "chapter 13", url: "class 1 maths chapter 13.pdf" }
+                ],
+                "Hindi": [
+                    { name: "chapter 1", url: "ahsr101.pdf" },
+                    { name: "chapter 2", url: "ahsr102.pdf" },
+                    { name: "chapter 3", url: "ahsr103.pdf" },
+                    { name: "chapter 4", url: "ahsr104.pdf" },
+                    { name: "chapter 5", url: "ahsr105.pdf" },
+                    { name: "chapter 6", url: "ahsr106.pdf" },
+                    { name: "chapter 7", url: "ahsr107.pdf" },
+                    { name: "chapter 8", url: "ahsr108.pdf" },
+                    { name: "chapter 9", url: "ahsr109.pdf" },
+                    { name: "chapter 10", url: "ahsr110.pdf" },
+                    { name: "chapter 11", url: "ahsr111.pdf" },
+                    { name: "chapter 12", url: "ahsr112.pdf" },
+                    { name: "chapter 13", url: "ahsr113.pdf" },
+                    { name: "chapter 14", url: "ahsr114.pdf" },
+                    { name: "chapter 15", url: "ahsr115.pdf" },
+                    { name: "chapter 16", url: "ahsr116.pdf" },
+                    { name: "chapter 17", url: "ahsr117.pdf" },
+                    { name: "chapter 18", url: "ahsr118.pdf" },
+                    { name: "chapter 19", url: "ahsr119.pdf" }
+                ],
+                "English": [
+                    {name: "unit 1 chapter 1",url:"unit 1 chapter 1.pdf"},
+                    {name: "unit 1 chapter 2",url:"unit 1 chapter 2.pdf"},
+                    {name: "unit 2 chapter 1",url:"unit 2 chapter 1.pdf"},
+                    {name: "unit 2 chapter 2",url:"unit 2 chapter 2.pdf"},
+                    {name: "unit 2 chapter 3",url:"unit 2 chapter 3.pdf"},
+                    {name: "unit 3 chapter 1",url:"unit 3 chapter 1.pdf"},
+                    {name: "unit 3 chapter 2",url:"unit 3 chapter 2.pdf"},
+                    {name: "unit 4 chapter 1",url:"unit 4 chapter 1.pdf"},
+                    {name: "unit 4 chapter 2",url:"unit 4 chapter 2.pdf"}
+                ]
+            },
+            "class 2": {
+                "Maths": [
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/bejm101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/bejm102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/bejm103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/bejm104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/bejm105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/bejm106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/bejm107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/bejm108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/bejm109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/bejm110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/bejm111.pdf" }
+            ],
+                "english": [
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/bemr101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/bemr102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/bemr103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/bemr104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/bemr105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/bemr106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/bemr107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/bemr108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/bemr109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/bemr110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/bemr111.pdf" }
+                ],
+                "hindi": [
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/bhsr101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/bhsr102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/bhsr103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/bhsr104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/bhsr105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/bhsr106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/bhsr107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/bhsr108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/bhsr109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/bhsr110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/bhsr111.pdf" }
+                ]
+            },
+            "class 3":{
+                "maths" :[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/cemm101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/cemm102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/cemm103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/cemm104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/cemm105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/cemm106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/cemm107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/cemm108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/cemm109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/cemm110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/cemm111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/cemm112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/cemm113.pdf" },
+                    { name: " chapter 14", url: "https://ncert.nic.in/textbook/pdf/cemm114.pdf" }
+                ],
+                "english" :[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/cesa101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/cesa102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/cesa103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/cesa104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/cesa105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/cesa106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/cesa107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/cesa108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/cesa109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/cesa110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/cesa111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/cesa112.pdf" }
+                ],
+                "Hindi" :[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/chve101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/chve102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/chve103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/chve104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/chve105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/chve106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/chve107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/chve108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/chve109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/chve110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/chve111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/chve112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/chve113.pdf" },
+                    { name: " chapter 14", url: "https://ncert.nic.in/textbook/pdf/chve114.pdf" },
+                    { name: " chapter 15", url: "https://ncert.nic.in/textbook/pdf/chve115.pdf" },
+                    { name: " chapter 16", url: "https://ncert.nic.in/textbook/pdf/chve116.pdf" },
+                    { name: " chapter 17", url: "https://ncert.nic.in/textbook/pdf/chve117.pdf" },
+                    { name: " chapter 18", url: "https://ncert.nic.in/textbook/pdf/chve118.pdf" }
+                ]
+            },
+            "class 4":{
+                "maths":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/demm101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/demm102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/demm103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/demm104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/demm105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/demm106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/demm107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/demm108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/demm109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/demm110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/demm111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/demm112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/demm113.pdf" },
+                    { name: " chapter 14", url: "https://ncert.nic.in/textbook/pdf/demm114.pdf" }
+                ],
+                "english":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/desa101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/desa102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/desa103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/desa104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/desa105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/desa106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/desa107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/desa108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/desa109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/desa110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/desa111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/desa112.pdf" }
+                ],
+                "hindi" :[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/dhve101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/dhve102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/dhve103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/dhve104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/dhve105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/dhve106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/dhve107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/dhve108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/dhve109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/dhve110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/dhve111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/dhve112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/dhve113.pdf" }
+                ]
+            },
+            "class 5":{
+                "maths":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/eemm101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/eemm102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/eemm103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/eemm104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/eemm105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/eemm106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/eemm107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/eemm108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/eemm109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/eemm110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/eemm111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/eemm112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/eemm113.pdf" },
+                    { name: " chapter 14", url: "https://ncert.nic.in/textbook/pdf/eemm114.pdf" },
+                    { name: " chapter 15", url: "https://ncert.nic.in/textbook/pdf/eemm115.pdf" }
+                ],
+                "english":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/eesa101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/eesa102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/eesa103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/eesa104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/eesa105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/eesa106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/eesa107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/eesa108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/eesa109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/eesa110.pdf" }
+                ],
+                "hindi":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ehve101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/ehve102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/ehve103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/ehve104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/ehve105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/ehve106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/ehve107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/ehve108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/ehve109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/ehve110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/ehve111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/ehve112.pdf" }
+                ]
+            },
+            "class 6":{
+                "maths":[
+
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/fegp101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/fegp102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/fegp103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/fegp104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/fegp105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/fegp106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/fegp107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/fegp108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/fegp109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/fegp110.pdf" }
+                ],
+                "english":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/fepr101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/fepr102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/fepr103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/fepr104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/fepr105.pdf" }
+                ],
+                "hindi":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/fhml101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/fhml102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/fhml103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/fhml104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/fhml105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/fhml106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/fhml107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/fhml108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/fhml109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/fhml110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/fhml111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/fhml112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/fhml113.pdf" }
+                ],
+                "science":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/fecu101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/fecu102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/fecu103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/fecu104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/fecu105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/fecu106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/fecu107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/fecu108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/fecu109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/fecu110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/fecu111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/fecu112.pdf" }
+                ],
+                "social science":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/fees101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/fees102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/fees103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/fees104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/fees105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/fees106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/fees107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/fees108.pdf" },
+                    { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/fees109.pdf" },
+                    { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/fees110.pdf" },
+                    { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/fees111.pdf" },
+                    { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/fees112.pdf" },
+                    { name: " chapter 13", url: "https://ncert.nic.in/textbook/pdf/fees113.pdf" },
+                    { name: " chapter 14", url: "https://ncert.nic.in/textbook/pdf/fees114.pdf" },
+                ]
+
+            },
+            "class 7":{
+                "maths":[
+                    { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/gegp101.pdf" },
+                    { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/gegp102.pdf" },
+                    { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/gegp103.pdf" },
+                    { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/gegp104.pdf" },
+                    { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/gegp105.pdf" },
+                    { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/gegp106.pdf" },
+                    { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/gegp107.pdf" },
+                    { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/gegp108.pdf" }
+            ],
+            "english":[
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/gepr101.pdf" },
+                { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/gepr102.pdf" },
+                { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/gepr103.pdf" },
+                { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/gepr104.pdf" },
+                { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/gepr105.pdf" }
+            ],
+            "hindi":[
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml101.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml102.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml103.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml104.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml105.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml106.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml107.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml108.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml109.pdf" },
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/ghml110.pdf" }
+            ],
+            "science":[
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/gecu101.pdf" },
+                { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/gecu102.pdf" },
+                { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/gecu103.pdf" },
+                { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/gecu104.pdf" },
+                { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/gecu105.pdf" },
+                { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/gecu106.pdf" },
+                { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/gecu107.pdf" },
+                { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/gecu108.pdf" },
+                { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/gecu109.pdf" },
+                { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/gecu110.pdf" },
+                { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/gecu111.pdf" },
+                { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/gecu112.pdf" }
+            ],
+            "social studies part 1":[
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/gees101.pdf" },
+                { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/gees102.pdf" },
+                { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/gees103.pdf" },
+                { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/gees104.pdf" },
+                { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/gees105.pdf" },
+                { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/gees106.pdf" },
+                { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/gees107.pdf" },
+                { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/gees108.pdf" },
+                { name: " chapter 9", url: "https://ncert.nic.in/textbook/pdf/gees109.pdf" },
+                { name: " chapter 10", url: "https://ncert.nic.in/textbook/pdf/gees110.pdf" },
+                { name: " chapter 11", url: "https://ncert.nic.in/textbook/pdf/gees111.pdf" },
+                { name: " chapter 12", url: "https://ncert.nic.in/textbook/pdf/gees112.pdf" }
+            ],
+            "social studies part 2":[
+                { name: " chapter 1", url: "https://ncert.nic.in/textbook/pdf/gees201.pdf" },
+                { name: " chapter 2", url: "https://ncert.nic.in/textbook/pdf/gees202.pdf" },
+                { name: " chapter 3", url: "https://ncert.nic.in/textbook/pdf/gees203.pdf" },
+                { name: " chapter 4", url: "https://ncert.nic.in/textbook/pdf/gees204.pdf" },
+                { name: " chapter 5", url: "https://ncert.nic.in/textbook/pdf/gees205.pdf" },
+                { name: " chapter 6", url: "https://ncert.nic.in/textbook/pdf/gees206.pdf" },
+                { name: " chapter 7", url: "https://ncert.nic.in/textbook/pdf/gees207.pdf" },
+                { name: " chapter 8", url: "https://ncert.nic.in/textbook/pdf/gees208.pdf" }
+            ]
+            }
+        };
+
+        function updateSubjects() {
+            const classVal = document.getElementById("classSelect").value;
+            const subjectSelect = document.getElementById("subjectSelect");
+            subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+            
+            if(classVal && data[classVal]) {
+                for(let subject in data[classVal]) {
+                    subjectSelect.innerHTML += `<option value="${subject}">${subject}</option>`;
+                }
+            }
+            updateChapters(); // Reset chapters
+        }
+
+        function updateChapters() {
+            const classVal = document.getElementById("classSelect").value;
+            const subjectVal = document.getElementById("subjectSelect").value;
+            const chapterSelect = document.getElementById("chapterSelect");
+            chapterSelect.innerHTML = '<option value="">-- Select Chapter --</option>';
+
+            if(classVal && subjectVal && data[classVal][subjectVal]) {
+                data[classVal][subjectVal].forEach(chap => {
+                    chapterSelect.innerHTML += `<option value="${chap.url}">${chap.name}</option>`;
+                });
+            }
+        }
+
+        function openPDF() {
+            const url = document.getElementById("chapterSelect").value;
+            if(url) {
+                window.open(url, "_blank");
+            } else {
+                alert("कृपया सभी विकल्प चुनें!");
+            }
+        }
+        
+    </script>
+</body>
+</html>

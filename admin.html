@@ -28,6 +28,10 @@
     <h3>Manage Videos</h3>
     <input type="text" id="vTitle" placeholder="Title" style="width:100%; padding:10px; margin-bottom:10px;">
     <input type="text" id="vUrl" placeholder="Embed URL" style="width:100%; padding:10px; margin-bottom:10px;">
+    <select id="vClass" style="width:100%; padding:10px; margin-bottom:10px;">
+    <option value="Class 7 Maths">Class 7 Maths</option>
+    <option value="Class 8 Science">Class 8 Science</option>
+</select>
     <button onclick="addVideo()" style="width:100%; padding:10px; background:var(--blue); border:none; cursor:pointer; font-weight:bold;">Add Video</button>
     <div id="videoList"></div>
 </div>
@@ -36,6 +40,7 @@
     <h3>Incoming Messages</h3>
     <div id="msgList">Loading messages...</div>
 </div>
+
 
 <script>
     const firebaseConfig = {
@@ -57,7 +62,7 @@
     }
 
     // Load Messages
-    db.collection("contact_messages").orderBy("time", "desc").onSnapshot(snap => {
+    db.collection("contact_messages").orderBy("timestamp", "desc").onSnapshot(snap => {
         const list = document.getElementById('msgList');
         list.innerHTML = snap.empty ? "No messages yet." : "";
         snap.forEach(doc => {
@@ -74,6 +79,48 @@
     async function deleteDoc(col, id) {
         if(confirm("Confirm Delete?")) await db.collection(col).doc(id).delete();
     }
+
+    // Video add karne ka function
+async function addVideo() {
+    const title = document.getElementById('vTitle').value;
+    const url = document.getElementById('vUrl').value;
+    const vClass = document.getElementById('vClass').value;
+
+    if (title === "" || url === "") {
+        alert("Please fill both Title and URL!");
+        return;
+    }
+
+    try {
+        await db.collection("videos").add({
+            title: title,
+            url: url,
+            class: vClass,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() // Sahi sorting ke liye time
+        });
+        alert("Video Added Successfully!");
+        document.getElementById('vTitle').value = "";
+        document.getElementById('vUrl').value = "";
+    } catch (error) {
+        console.error("Error adding video: ", error);
+        alert("Error: " + error.message);
+    }
+}
+
+// Video list load karne ka logic (Admin panel mein dekhne ke liye)
+db.collection("videos").orderBy("timestamp", "desc").onSnapshot(snap => {
+    const vList = document.getElementById('videoList');
+    vList.innerHTML = "";
+    snap.forEach(doc => {
+        const v = doc.data();
+        vList.innerHTML += `
+            <div class="item">
+                <button class="del-btn" onclick="deleteDoc('videos','${doc.id}')">Delete</button>
+                <strong>${v.title}</strong><br>
+                <small style="color:var(--text-gray)">${v.url}</small>
+            </div>`;
+    });
+});
 </script>
 </body>
 </html>

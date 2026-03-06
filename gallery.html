@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery | Vector Classes</title>
+
+     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     <style>
         :root { 
             --blue: #38bdf8; 
@@ -251,9 +254,21 @@
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
          }
+          // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOqt5Pe6q_hiJbCTly7MQ_8ob4ICyMmx4",
+            authDomain: "vector-classes-6c2a7.firebaseapp.com",
+            projectId: "vector-classes-6c2a7",
+            storageBucket: "vector-classes-6c2a7.appspot.com",
+            messagingSenderId: "975898657895",
+            appId: "1:975898657895:web:52e4f64e50a45d434840c2"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
           function logout() {
-            auth.signOut().then(() => { window.location.href="login.html" });
+            auth.signOut().then(() => { window.location.href="index.html" });
         }
     </script>
     

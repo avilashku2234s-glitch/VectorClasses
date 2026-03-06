@@ -6,6 +6,7 @@
     <title>Courses | Vector Classes</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
     
     <style>
         :root { --blue: #38bdf8; --light: #0f172a; --dark-card: #1e293b; --text-gray: #94a3b8; }
@@ -217,9 +218,14 @@
             messagingSenderId: "975898657895",
             appId: "1:975898657895:web:52e4f64e50a45d434840c2"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+       firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
+          function logout() {
+            auth.signOut().then(() => { window.location.href="login.html" });
+        }
+        const db = firebase.firestore();
+        
         // Data Load Function
         db.collection("videos").orderBy("timestamp", "desc").onSnapshot(snapshot => {
             const mathGrid = document.getElementById('math-grid');
@@ -256,12 +262,7 @@
                 card.style.display = title.includes(input) ? "block" : "none";
             });
         }
-
-
-
-
-
-          const data = {
+        const data = {
             "class 1": {
                 "Maths": [
                     { name: "chapter 1", url: "https://ncert.nic.in/textbook/pdf/aejm101.pdf" },
@@ -669,9 +670,6 @@
                 alert("कृपया सभी विकल्प चुनें!");
             }   
          }
-         function logout() {
-            auth.signOut().then(() => { window.location.href="login.html" });
-        }
     </script>
 </body>
 </html>
